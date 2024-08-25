@@ -2,17 +2,17 @@
  
 
 if [ ! -d /boot/firmware/PPPwn/payloads ]; then
-  sudo mkdir /boot/firmware/PPPwn/payloads
+   mkdir /boot/firmware/PPPwn/payloads
 fi
 if [ -z $1 ] ;then
-sudo apt install pppoe dnsmasq iptables nginx php-fpm nmap at net-tools -y
+ apt install pppoe dnsmasq iptables nginx php-fpm nmap at net-tools -y
 echo 'bogus-priv
 expand-hosts
 domain-needed
 server=8.8.8.8
 listen-address=127.0.0.1
 port=5353
-conf-file=/etc/dnsmasq.more.conf' | sudo tee /etc/dnsmasq.conf
+conf-file=/etc/dnsmasq.more.conf' |  tee /etc/dnsmasq.conf
 echo 'auth
 lcp-echo-failure 3
 lcp-echo-interval 60
@@ -23,7 +23,7 @@ ms-dns 192.168.2.1
 netmask 255.255.255.0
 defaultroute
 noipdefault
-usepeerdns' | sudo tee /etc/ppp/pppoe-server-options
+usepeerdns' |  tee /etc/ppp/pppoe-server-options
 echo '[Service]
 WorkingDirectory=/boot/firmware/PPPwn
 ExecStart=/boot/firmware/PPPwn/pppoe.sh
@@ -32,7 +32,7 @@ User=root
 Group=root
 Environment=NODE_ENV=production
 [Install]
-WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pppoe.service
+WantedBy=multi-user.target' |  tee /etc/systemd/system/pppoe.service
 echo '[Service]
 WorkingDirectory=/boot/firmware/PPPwn
 ExecStart=/boot/firmware/PPPwn/dtlink.sh
@@ -41,8 +41,8 @@ User=root
 Group=root
 Environment=NODE_ENV=production
 [Install]
-WantedBy=multi-user.target' | sudo tee /etc/systemd/system/dtlink.service
-PHPVER=$(sudo php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
+WantedBy=multi-user.target' |  tee /etc/systemd/system/dtlink.service
+PHPVER=$( php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
 echo 'server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
@@ -60,36 +60,36 @@ echo 'server {
     include snippets/fastcgi-php.conf;
     fastcgi_pass unix:/var/run/php/php'$PHPVER'-fpm.sock;
 	}
-}' | sudo tee /etc/nginx/sites-enabled/default
-sudo sed -i "s^www-data	ALL=(ALL) NOPASSWD: ALL^^g" /etc/sudoers
-echo 'www-data	ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
-sudo /etc/init.d/nginx restart
+}' |  tee /etc/nginx/sites-enabled/default
+ sed -i "s^www-data	ALL=(ALL) NOPASSWD: ALL^^g" /etc/ers
+echo 'www-data	ALL=(ALL) NOPASSWD: ALL' |  tee -a /etc/ers
+ /etc/init.d/nginx restart
 if [ ! -f /etc/udev/rules.d/99-pwnmnt.rules ]; then
-sudo mkdir /media/pwndrives
-echo 'MountFlags=shared' | sudo tee -a /usr/lib/systemd/system/systemd-udevd.service
+ mkdir /media/pwndrives
+echo 'MountFlags=shared' |  tee -a /usr/lib/systemd/system/systemd-udevd.service
 echo 'ACTION=="add", KERNEL=="sd*", SUBSYSTEMS=="usb|scsi", DRIVERS=="sd", SYMLINK+="usbdrive", RUN+="/boot/firmware/PPPwn/pwnmount.sh $kernel"
-ACTION=="remove", SUBSYSTEM=="block", RUN+="/boot/firmware/PPPwn/pwnumount.sh $kernel"' | sudo tee /etc/udev/rules.d/99-pwnmnt.rules
-sudo udevadm control --reload
+ACTION=="remove", SUBSYSTEM=="block", RUN+="/boot/firmware/PPPwn/pwnumount.sh $kernel"' |  tee /etc/udev/rules.d/99-pwnmnt.rules
+ udevadm control --reload
 fi
 if [ -f /media/pwndrives ]; then
-sudo mkdir /media/pwndrives
+ mkdir /media/pwndrives
 fi
-PPSTAT=$(sudo systemctl list-unit-files --state=enabled --type=service|grep pppoe) 
+PPSTAT=$( systemctl list-unit-files --state=enabled --type=service|grep pppoe) 
 if [[ ! $PPSTAT == "" ]] ; then
-sudo systemctl disable pppoe
+ systemctl disable pppoe
 fi
 if [ ! -f /boot/firmware/PPPwn/ports.txt ]; then
-echo '2121,3232,9090,8080,12800,1337' | sudo tee /boot/firmware/PPPwn/ports.txt
+echo '2121,3232,9090,8080,12800,1337' |  tee /boot/firmware/PPPwn/ports.txt
 fi
-sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
-sudo sed -i 's^sudo bash /boot/firmware/PPPwn/devboot.sh \&^^g' /etc/rc.local
-sudo sed -i 's^exit 0^sudo bash /boot/firmware/PPPwn/devboot.sh \&\n\nexit 0^g' /etc/rc.local
+ sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
+ sed -i 's^ bash /boot/firmware/PPPwn/devboot.sh \&^^g' /etc/rc.local
+ sed -i 's^exit 0^ bash /boot/firmware/PPPwn/devboot.sh \&\n\nexit 0^g' /etc/rc.local
 if [[ $(dpkg-query -W --showformat='${Status}\n' python3-scapy|grep "install ok installed")  == "" ]] ;then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to enable the option to use the python(slower) PPPwn\033[36m(Y|N)?: \033[0m')" pypwnopt
 case $pypwnopt in
 [Yy]* ) 
-sudo apt install python3 python3-scapy -y
+ apt install python3 python3-scapy -y
 break;;
 [Nn]* ) 
 UPYPWN="false"
@@ -105,7 +105,7 @@ while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to install a FTP server? (Y|N):\033[0m ')" ftpq
 case $ftpq in
 [Yy]* ) 
-sudo apt-get install vsftpd -y
+ apt-get install vsftpd -y
 echo "listen=YES
 local_enable=YES
 dirmessage_enable=YES
@@ -124,14 +124,14 @@ local_umask=077
 allow_writeable_chroot=YES
 chroot_local_user=YES
 user_sub_token=$USER
-local_root=/boot/firmware/PPPwn" | sudo tee /etc/vsftpd.conf
-sudo sed -i 's^root^^g' /etc/ftpusers
+local_root=/boot/firmware/PPPwn" |  tee /etc/vsftpd.conf
+ sed -i 's^root^^g' /etc/ftpusers
 echo -e '\n\n\033[33mTo use FTP you must set the \033[36mroot\033[33m account password so you can login to the ftp server with full write permissions\033[0m\n'
 while true; do
 read -p "$(printf '\r\n\033[36mDo you want to set the \033[36mroot\033[36m account password\r\n\r\n\033[36m(Y|N)?: \033[0m')" rapw
 case $rapw in
 [Yy]* ) 
-sudo passwd root
+ passwd root
 echo -e '\r\n\033[33mYou can log into the ftp server with\r\nUsername: \033[36mroot\033[33m\r\nand the password you just set\033[0m'
 break;;
 [Nn]* ) 
@@ -153,7 +153,7 @@ while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to setup a SAMBA share? (Y|N):\033[0m ')" smbq
 case $smbq in
 [Yy]* ) 
-sudo apt-get install samba samba-common-bin -y
+ apt-get install samba samba-common-bin -y
 echo '[global]
 ;   interfaces = 127.0.0.0/8 eth0
 ;   bind interfaces only = yes
@@ -225,9 +225,9 @@ force create mask = 0777
 force directory mask = 0777
 force user = root
 force group = root
-public=yes' | sudo tee /etc/samba/smb.conf
-sudo systemctl unmask smbd
-sudo systemctl enable smbd
+public=yes' |  tee /etc/samba/smb.conf
+ systemctl unmask smbd
+ systemctl enable smbd
 echo -e '\033[32mSamba installed\033[0m'
 break;;
 [Nn]* ) echo -e '\033[35mSkipping SAMBA install\033[0m'
@@ -243,7 +243,7 @@ case $conf in
 [Yy]* ) 
 break;;
 [Nn]* ) 
-sudo systemctl start pipwn
+ systemctl start pipwn
 echo -e '\033[36mUpdate complete\033[0m'
 exit 1
 break;;
@@ -328,7 +328,7 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
-echo '"'$PPPU'"  *  "'$PPPW'"  192.168.2.2' | sudo tee /etc/ppp/pap-secrets
+echo '"'$PPPU'"  *  "'$PPPW'"  192.168.2.2' |  tee /etc/ppp/pap-secrets
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to detect console shutdown and restart PPPwn\r\n\r\n\033[36m(Y|N)?: \033[0m')" dlnk
 case $dlnk in
@@ -477,7 +477,7 @@ esac
 done
 INUM=0
 echo -e '\r\n\r\n  \033[44m\033[97m Interface list \033[0m\r\n'
-readarray -t difcearr  < <(sudo ip link | cut -d " " -f-2 | cut -d ":" -f2-2)
+readarray -t difcearr  < <( ip link | cut -d " " -f-2 | cut -d ":" -f2-2)
 for difce in "${difcearr[@]}"; do
 if [ ! -z $difce ]; then
 if [ $difce != "lo" ] && [[ $difce != *"ppp"* ]] && [[ ! $difce == *"wlan"* ]]; then
@@ -546,13 +546,13 @@ read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to act as a flash drive to
 case $vusb in
 [Yy]* ) 
 echo -e '\033[32mThe pi will mount as a drive\n\033[33mYou must plug the pi into the console usb port using the \033[35musb-c\033[33m of the pi and the usb drive in the pi must contain a folder named \033[35mpayloads\033[0m'
-sudo sed -i "s^dtoverlay=dwc2^^g" /boot/firmware/config.txt
-echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
+ sed -i "s^dtoverlay=dwc2^^g" /boot/firmware/config.txt
+echo 'dtoverlay=dwc2' |  tee -a /boot/firmware/config.txt
 VUSB="true"
 break;;
 [Nn]* ) 
 echo -e '\033[35mThe pi will not mount as a drive\033[0m'
-sudo sed -i "s^dtoverlay=dwc2^^g" /boot/firmware/config.txt
+ sed -i "s^dtoverlay=dwc2^^g" /boot/firmware/config.txt
 VUSB="false"
 break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
@@ -609,8 +609,8 @@ address=/ribob01.net/127.0.0.1
 address=/cddbp.net/127.0.0.1
 address=/nintendo.net/127.0.0.1
 address=/ea.com/127.0.0.1
-address=/'$HSTN'.local/192.168.2.1' | sudo tee /etc/dnsmasq.more.conf
-sudo systemctl restart dnsmasq
+address=/'$HSTN'.local/192.168.2.1' |  tee /etc/dnsmasq.more.conf
+ systemctl restart dnsmasq
 echo '#!/bin/bash
 INTERFACE="'${IFCE/ /}'" 
 FIRMWAREVERSION="'${FWV/ /}'" 
@@ -626,14 +626,14 @@ PYPWN='$UPYPWN'
 LEDACT="normal"
 DDNS=false
 OIPV='$IPV'
-UGH='$USEGH'' | sudo tee /boot/firmware/PPPwn/config.sh
+UGH='$USEGH'' |  tee /boot/firmware/PPPwn/config.sh
 echo '#!/bin/bash
 XFWAP="1"
 XFGD="4"
 XFBS="0"
-XFNWB=false' | sudo tee /boot/firmware/PPPwn/pconfig.sh
-sudo rm -f /usr/lib/systemd/system/network-online.target
-sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
+XFNWB=false' |  tee /boot/firmware/PPPwn/pconfig.sh
+ rm -f /usr/lib/systemd/system/network-online.target
+ sed -i 's^ bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
 echo '[Service]
 WorkingDirectory=/boot/firmware/PPPwn
 ExecStart=/boot/firmware/PPPwn/run.sh
@@ -642,21 +642,21 @@ User=root
 Group=root
 Environment=NODE_ENV=production
 [Install]
-WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pipwn.service
-sudo chmod u+rwx /etc/systemd/system/pipwn.service
-sudo chmod u+rwx /etc/systemd/system/pppoe.service
-sudo chmod u+rwx /etc/systemd/system/dtlink.service
-sudo systemctl enable pipwn
+WantedBy=multi-user.target' |  tee /etc/systemd/system/pipwn.service
+ chmod u+rwx /etc/systemd/system/pipwn.service
+ chmod u+rwx /etc/systemd/system/pppoe.service
+ chmod u+rwx /etc/systemd/system/dtlink.service
+ systemctl enable pipwn
 CHSTN=$(hostname | cut -f1 -d' ')
-sudo sed -i "s^$CHSTN^$HSTN^g" /etc/hosts
-sudo sed -i "s^$CHSTN^$HSTN^g" /etc/hostname
+ sed -i "s^$CHSTN^$HSTN^g" /etc/hosts
+ sed -i "s^$CHSTN^$HSTN^g" /etc/hostname
 echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'
-sudo reboot
+ reboot
 else
 if [[ $(dpkg-query -W --showformat='${Status}\n' net-tools|grep "install ok installed")  == "" ]] ;then
-sudo apt install net-tools -y
+ apt install net-tools -y
 fi
-echo "Update complete, Rebooting."  | sudo tee /dev/tty1 | sudo tee /dev/pts/* | sudo tee -a /boot/firmware/PPPwn/upd.log
+echo "Update complete, Rebooting."  |  tee /dev/tty1 |  tee /dev/pts/* |  tee -a /boot/firmware/PPPwn/upd.log
 coproc read -t 6 && wait "$!" || true
-sudo reboot
+ reboot
 fi
