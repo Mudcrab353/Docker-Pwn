@@ -149,16 +149,16 @@ print("<br><table align=center><td><form method=\"post\">");
 
 $haspl=0;
 
-$cmd = 'sudo ls /media/pwndrives';
+$cmd = ' ls /media/pwndrives';
 exec($cmd ." 2>&1", $rdir, $ret);
 foreach ($rdir as $x) {
-	$cmd = 'sudo ls /media/pwndrives/'.$x;
+	$cmd = ' ls /media/pwndrives/'.$x;
 	exec($cmd ." 2>&1", $pdir, $ret);
 	foreach ($pdir as $y) {
 		if (strtolower($y) == "payloads")
 		{
 			$cnt=0;
-			$cmd = 'sudo ls /media/pwndrives/'.$x.'/'.$y;
+			$cmd = ' ls /media/pwndrives/'.$x.'/'.$y;
 			exec($cmd ." 2>&1", $pldata, $ret);
 			if ($ret == 0 && count($pldata) > 0)
 			{
@@ -183,7 +183,7 @@ foreach ($rdir as $x) {
 }
 
 
-$cmd = 'sudo ls /boot/firmware/PPPwn/payloads';
+$cmd = ' ls /boot/firmware/PPPwn/payloads';
 exec($cmd ." 2>&1", $sdir, $ret);
 if ($ret == 0 && count($sdir) > 0)
 {
