@@ -20,76 +20,76 @@ if (isset($_POST['save'])){
 	$config .= "DDNS=".(isset($_POST["ddns"]) ? "true" : "false")."\n";
 	$config .= "OIPV=".(isset($_POST["oipv"]) ? "true" : "false")."\n";
 	$config .= "UGH=".(isset($_POST["ugh"]) ? "true" : "false")."\n";
-	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
-	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
- 	exec('sudo iptables -P INPUT ACCEPT');
- 	exec('sudo iptables -P FORWARD ACCEPT');
- 	exec('sudo iptables -P OUTPUT ACCEPT');
- 	exec('sudo iptables -t nat -F');
- 	exec('sudo iptables -t mangle -F');
- 	exec('sudo iptables -F');
- 	exec('sudo iptables -X');
-	exec('sudo sysctl net.ipv4.ip_forward=1');
- 	exec('sudo sysctl net.ipv4.conf.all.route_localnet=1');
- 	exec('sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5353');
+	exec('echo "'.$config.'" |  tee /boot/firmware/PPPwn/config.sh');
+	exec('echo "'.trim($_POST["plist"]).'" |  tee /boot/firmware/PPPwn/ports.txt');
+ 	exec(' iptables -P INPUT ACCEPT');
+ 	exec(' iptables -P FORWARD ACCEPT');
+ 	exec(' iptables -P OUTPUT ACCEPT');
+ 	exec(' iptables -t nat -F');
+ 	exec(' iptables -t mangle -F');
+ 	exec(' iptables -F');
+ 	exec(' iptables -X');
+	exec(' sysctl net.ipv4.ip_forward=1');
+ 	exec(' sysctl net.ipv4.conf.all.route_localnet=1');
+ 	exec(' iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5353');
 	$plst = explode(",",trim($_POST["plist"]));
 	for($i = 0; $i < count($plst); ++$i) {
-	 	exec('sudo iptables -t nat -I PREROUTING -p tcp --dport '.str_replace("-", ":", $plst[$i]).' -j DNAT --to 192.168.2.2:'.str_replace(":", "-", $plst[$i]));
-		exec('sudo iptables -t nat -I PREROUTING -p udp --dport '.str_replace("-", ":", $plst[$i]).' -j DNAT --to 192.168.2.2:'.str_replace(":", "-", $plst[$i]));
+	 	exec(' iptables -t nat -I PREROUTING -p tcp --dport '.str_replace("-", ":", $plst[$i]).' -j DNAT --to 192.168.2.2:'.str_replace(":", "-", $plst[$i]));
+		exec(' iptables -t nat -I PREROUTING -p udp --dport '.str_replace("-", ":", $plst[$i]).' -j DNAT --to 192.168.2.2:'.str_replace(":", "-", $plst[$i]));
 	}
- 	exec('sudo iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE');
+ 	exec(' iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE');
 
     if (isset($_POST["vmusb"]) == true)
 	{
-      exec('sudo bash /boot/firmware/PPPwn/remount.sh &');
+      exec(' bash /boot/firmware/PPPwn/remount.sh &');
 	}
 	else
 	{
-      exec('sudo rmmod g_mass_storage');
+      exec(' rmmod g_mass_storage');
 	}
 	if (isset($_POST["ddns"]) == true)
 	{
-      exec('sudo bash /boot/firmware/PPPwn/disdns.sh &');
+      exec(' bash /boot/firmware/PPPwn/disdns.sh &');
 	}
 	else
 	{
-      exec('sudo bash /boot/firmware/PPPwn/endns.sh &');
+      exec(' bash /boot/firmware/PPPwn/endns.sh &');
 	}
 	if (isset($_POST["pppoeconn"]) == true)
 	{
-      $cmd = 'sudo systemctl is-active pipwn';
+      $cmd = ' systemctl is-active pipwn';
       exec($cmd ." 2>&1", $sresp, $pret);
 	  if (implode($sresp) != "active")
 	  {
-		$cmd = 'sudo systemctl is-active pppoe';
+		$cmd = ' systemctl is-active pppoe';
 		exec($cmd ." 2>&1", $presp, $pret);
 		if (implode($presp) != "active")
 		{
-			exec('sudo systemctl start pppoe'); 
+			exec(' systemctl start pppoe'); 
 		}
 	  }
 	}
 	else
 	{
-      exec('sudo systemctl stop pppoe');
+      exec(' systemctl stop pppoe');
 	}
 	sleep(1);
 }
  
 if (isset($_POST['restart'])){
-   exec('echo "\033[32mRestarting\033[0m"  | sudo tee /dev/tty1 && sudo systemctl restart pipwn');
+   exec('echo "\033[32mRestarting\033[0m"  |  tee /dev/tty1 &&  systemctl restart pipwn');
 }
 
 if (isset($_POST['reboot'])){
 	
    print("<html><head><title>PI-Pwn</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head><style>body{user-select: none;-webkit-user-select: none;background-color: #0E0E14;color: white;font-family: Arial;font-size:20px;}a {padding: 5px 5px;font-size:20px; padding:4px; color:6495ED;} a:hover,a:focus {color: #999999;text-decoration: none;cursor: pointer;}</style><body><br><br><br><center>The PI is rebooting...<br><br><a href=index.php>Reload Page</a></center></body></html>");
-   exec('sudo reboot');
+   exec(' reboot');
    exit;
 }
  
 if (isset($_POST['shutdown'])){
    print("<html><head><title>PI-Pwn</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head><style>body{user-select: none;-webkit-user-select: none;background-color: #0E0E14;color: white;font-family: Arial;font-size:20px;}</style><body><br><br><br><center>The PI is shutting down!</center></body></html>");
-   exec('sudo poweroff');
+   exec(' poweroff');
    exit;
 }
 
@@ -99,11 +99,11 @@ if (isset($_POST['payloads'])){
 }
 
 if (isset($_POST['remount'])){
-   exec('sudo bash /boot/firmware/PPPwn/remount.sh &');
+   exec(' bash /boot/firmware/PPPwn/remount.sh &');
 }
 
 
-$cmd = 'sudo cat /boot/firmware/PPPwn/config.sh';
+$cmd = ' cat /boot/firmware/PPPwn/config.sh';
 exec($cmd ." 2>&1", $data, $ret);
 if ($ret == 0){
 foreach ($data as $x) {
@@ -188,7 +188,7 @@ if (empty($oipv)){ $oipv = "false";}
 if (empty($ugh)){ $ugh = "true";}
 
 
-$cmd = 'sudo cat /boot/firmware/PPPwn/ports.txt';
+$cmd = ' cat /boot/firmware/PPPwn/ports.txt';
 exec($cmd ." 2>&1", $pdata, $pret);
 if ($pret == 0){
    $portlist = "";
@@ -499,11 +499,11 @@ function setEnd() {
 
 
 
-$cmd = 'sudo tr -d \'\0\' </proc/device-tree/model';
+$cmd = ' tr -d \'\0\' </proc/device-tree/model';
 exec($cmd ." 2>&1", $pidata, $ret);
 if (str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))
 {
-$cmd = 'sudo cat /boot/firmware/config.txt | grep "dtoverlay=dwc2"';
+$cmd = ' cat /boot/firmware/config.txt | grep "dtoverlay=dwc2"';
 exec($cmd ." 2>&1", $dwcdata, $ret);
 $dwcval = trim(implode($dwcdata)); 
 if ($vmusb == "true" && ! empty($dwcval))
@@ -519,7 +519,7 @@ print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reb
 
 
 print("<select name=\"interface\">");
-$cmd = 'sudo ip link | cut -d " " -f-2 | cut -d ":" -f2-2 ';
+$cmd = ' ip link | cut -d " " -f-2 | cut -d ":" -f2-2 ';
 exec($cmd ." 2>&1", $idata, $iret);
 foreach ($idata as $x) {
 $x = trim($x);
@@ -577,7 +577,7 @@ print("</select><label for=\"ledact\">&nbsp; Led activity</label><br><br>");
 
 
 
-$cmd = 'sudo dpkg-query -W --showformat="\${Status}\\n" python3-scapy | grep "install ok installed"';
+$cmd = ' dpkg-query -W --showformat="\${Status}\\n" python3-scapy | grep "install ok installed"';
 exec($cmd ." 2>&1", $pypdata, $ret);
 if (implode($pypdata) == "install ok installed")
 {
@@ -782,7 +782,7 @@ window.onclick = function(event) {
 ");
 
 if (isset($_POST['update'])){
-	exec('sudo bash /boot/firmware/PPPwn/update.sh >> /dev/null &');
+	exec(' bash /boot/firmware/PPPwn/update.sh >> /dev/null &');
     print("logger.style.display = \"block\";
     var lbody = document.getElementsByClassName(\"logger-body\")[0];
     lbody.innerHTML  = '<textarea disabled id=\"text_box\" rows=\"40\"></textarea>';
