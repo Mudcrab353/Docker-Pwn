@@ -6,11 +6,11 @@ fi
 if [ -z $VMUSB ]; then VMUSB=false; fi
 if [ $VMUSB = true ] ; then
 if [ -z $1 ]; then
-  sudo rmmod g_mass_storage
+  rmmod g_mass_storage
   FOUND=0
-  readarray -t rdirarr  < <(sudo ls /media/pwndrives)
+  readarray -t rdirarr  < <(ls /media/pwndrives)
   for rdir in "${rdirarr[@]}"; do
-    readarray -t pdirarr  < <(sudo ls /media/pwndrives/${rdir})
+    readarray -t pdirarr  < <(ls /media/pwndrives/${rdir})
     for pdir in "${pdirarr[@]}"; do
        if [[ ${pdir,,}  == "payloads" ]] ; then 
 	     FOUND=1
@@ -23,12 +23,12 @@ if [ -z $1 ]; then
       fi
   done  
   if [[ ! -z $UDEV ]] ;then
-    echo $UDEV | sudo tee /boot/firmware/PPPwn/vdev.txt
-    sudo modprobe g_mass_storage file=$UDEV stall=0 ro=0 removable=1
-	echo -e "\033[92mUSB Drive:\033[93m Remounted\033[0m" | sudo tee /dev/tty1
+    echo $UDEV |  tee /boot/firmware/PPPwn/vdev.txt
+    modprobe g_mass_storage file=$UDEV stall=0 ro=0 removable=1
+	echo -e "\033[92mUSB Drive:\033[93m Remounted\033[0m" | tee /dev/tty1
   fi
 else
-  readarray -t pdirarr  < <(sudo ls /media/pwndrives/$1)
+  readarray -t pdirarr  < <(ls /media/pwndrives/$1)
   for pdir in "${pdirarr[@]}"; do
      if [[ ${pdir,,}  == "payloads" ]] ; then 
        UDEV='/dev/'$1
@@ -36,9 +36,9 @@ else
     fi
   done
   if [[ ! -z $UDEV ]] ;then
-    sudo rmmod g_mass_storage
-	echo $UDEV | sudo tee /boot/firmware/PPPwn/vdev.txt
-    sudo modprobe g_mass_storage file=$UDEV stall=0 ro=0 removable=1
+    rmmod g_mass_storage
+	echo $UDEV | tee /boot/firmware/PPPwn/vdev.txt
+    modprobe g_mass_storage file=$UDEV stall=0 ro=0 removable=1
   fi
 fi
 fi
