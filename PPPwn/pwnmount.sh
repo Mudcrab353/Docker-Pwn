@@ -7,7 +7,7 @@ if [ $1 == $UDEV ] ; then
 if [ ! -d /media/pwndrives/$UDEV ]; then
 mkdir /media/pwndrives/$UDEV
 fi
-sudo systemd-mount "${dev}" /media/pwndrives/$UDEV &
-echo "sleep 5 ;sudo bash /boot/firmware/PPPwn/remount.sh "$UDEV | sudo at now
+systemd-mount "${dev}" /media/pwndrives/$UDEV &
+echo "sleep 5 ;sudo bash /boot/firmware/PPPwn/remount.sh "$UDEV | at now
 fi
 done
