@@ -14,7 +14,7 @@ if (isset($_POST['save'])){
 	$config .= "XFGD=\\\"".$xfgd."\\\"\n";
 	$config .= "XFBS=\\\"".$xfbs."\\\"\n";
 	$config .= "XFNWB=".$xfnwb."\n";
-	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/pconfig.sh');
+	exec('echo "'.$config.'" |  tee /boot/firmware/PPPwn/pconfig.sh');
 	sleep(1);
 }
 
@@ -25,7 +25,7 @@ if (isset($_POST['back'])){
 }
 
 
-$cmd = 'sudo cat /boot/firmware/PPPwn/pconfig.sh';
+$cmd = ' cat /boot/firmware/PPPwn/pconfig.sh';
 exec($cmd ." 2>&1", $data, $ret);
 if ($ret == 0){
 foreach ($data as $x) {
