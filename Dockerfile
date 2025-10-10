@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone Pi-Pwn repo
-RUN git clone https://github.com/Stooged/pi-pwn /opt/pi-pwn
+RUN git clone https://github.com/Mudcrab353/Docker-Pwn.git /opt/pi-pwn
 
 # Install Python requirements (if any)
 RUN pip3 install --no-cache-dir -r /opt/pi-pwn/requirements.txt || true
