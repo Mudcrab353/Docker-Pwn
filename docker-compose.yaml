@@ -1,0 +1,12 @@
+services:
+  pi-pwn:
+    build: https://github.com/Mudcrab353/Docker-Pwn.git
+    container_name: docker-pwn
+    environment:
+      - TZ=Australia/Sydney
+    network_mode: host
+    privileged: True
+    restart: unless-stopped
+    volumes:
+      - /mnt/nvme/app-config/docker-pwn/config:/opt/pi-pwn
+version: '3.9'
