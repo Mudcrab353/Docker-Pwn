@@ -1,12 +1,16 @@
 services:
-  pi-pwn:
-    build: https://github.com/Mudcrab353/Docker-Pwn.git
+  docker-pwn:
+  build .
+    image: docker-pwn:latest
     container_name: docker-pwn
-    environment:
-      - TZ=Australia/Sydney
-    network_mode: host
-    privileged: True
-    restart: unless-stopped
+    network_mode: "host"       # required to access host interfaces by name
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    # If you prefer "privileged: true" instead of cap_add, you can uncomment:
+    # privileged: true
     volumes:
-      - /mnt/nvme/app-config/docker-pwn/config:/opt/pi-pwn
-version: '3.9'
+      - /mnt/nvme/app-config/pppwn/config:/home/docker-pwn/data   # optional persisted folder for payloads/logs
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
