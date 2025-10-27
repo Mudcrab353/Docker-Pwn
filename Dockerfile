@@ -1,25 +1,34 @@
-# ===============================
-# Dockerfile for Pi-Pwn (Stooged)
-# ===============================
-FROM debian:bookworm
+# Dockerfile - minimal Ubuntu environment for Pi-Pwn / PPPwn
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    git python3 python3-pip hostapd dnsmasq aircrack-ng iw net-tools iproute2 \
-    usbutils curl wget python3-flask \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    git \
+    python3 \
+    python3-pip \
+    python3-venv \
+    iproute2 \
+    net-tools \
+    iputils-ping \
+    wget \
+    ca-certificates \
+    libpcap-dev \
+    clang \
+    cmake \
+    locales \
+    curl \
+    sudo \
+    udev \
     && rm -rf /var/lib/apt/lists/*
 
-# Clone Pi-Pwn repo
-RUN git clone https://github.com/Mudcrab353/Docker-Pwn /opt/pi-pwn
+# create a user to avoid running everything as root (optional)
+RUN useradd -m -s /bin/bash pippwn && echo "pippwn ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Install Python requirements (if any)
-RUN pip3 install --no-cache-dir -r /opt/pi-pwn/requirements.txt || true
+WORKDIR /home/pippwn
+USER pippwn
 
-# Copy entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-WORKDIR /opt/pi-pwn
-ENTRYPOINT ["/entrypoint.sh"]
+# keep container running by default; override with docker exec to run tools
+ENTRYPOINT ["/bin/bash", "-lc"]
+CMD ["while true; do sleep 3600; done"]
