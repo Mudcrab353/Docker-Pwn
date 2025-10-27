@@ -24,10 +24,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # create a user to avoid running everything as root (optional)
-RUN useradd -m -s /bin/bash pippwn && echo "pippwn ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN useradd -m -s /bin/bash docker-pwn && echo "docker-pwn ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-WORKDIR /home/pippwn
-USER pippwn
+WORKDIR /home/docker-pwn
+USER docker-pwn
 
 # keep container running by default; override with docker exec to run tools
 ENTRYPOINT ["/bin/bash", "-lc"]
